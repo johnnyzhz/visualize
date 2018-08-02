@@ -1,0 +1,374 @@
+﻿<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+
+<script src="https://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+<style>
+/* CSS样式制作 */  
+ * {
+	padding:0px;
+	margin:0px;
+}
+a {
+	text-decoration:none;
+	color:black;
+}
+a:hover {
+	text-decoration:none;
+	color:#336699;
+}
+.submit {
+    width:60px;
+    padding:5px;
+    height:40px;
+    margin:20px;
+
+}
+.upload {
+    width:160px;
+    padding:5px;
+    height:150px;
+    margin:20px;
+
+}
+.appearance {
+	width:270px;
+	padding:5px;
+	height:150px;
+	margin:20px;
+
+}
+.appearance ul {
+	list-style:none;
+	display:;
+	height:30px;
+	line-height:30px;
+    padding:10px 0px;
+    margin:10px 0px;
+	border-bottom:2px #C88 solid;
+}
+.appearance ul li {
+	background:#FFF;
+	cursor:pointer;
+	float:left;
+	list-style:none height:29px;
+	line-height:29px;
+	padding:0px 10px;
+	margin:0px 10px;
+	border:1px solid #BBB;
+	border-bottom:2px solid #C88;
+}
+.appearance ul li.on {
+	border-top:2px solid gray;
+	border-bottom:2px solid #FFF;
+}
+.appearance div {
+	height:100px;
+	width:250px;
+	line-height:24px;
+	border-top:none;
+	padding:1px;
+	border:1px solid #336699;
+	padding:10px;
+}
+#layout {
+    width:400px;
+    padding:5px;
+    height:450px;
+    margin:20px;
+
+}
+#layout div {
+    height:250px;
+    width:380px;
+    line-height:24px;
+    border-top:5px;
+    padding:1px;
+    border:1px solid #336699;
+    padding:10px;
+}
+#layout ul {
+    list-style:none;
+    display:;
+    height:90px;
+    line-height:30px;
+    padding:10px 0px;
+    margin:10px 0px;
+    border-bottom:2px #C88 solid;
+}
+.hide {
+	display:none;
+}
+
+</style>
+</head>
+<body>
+<div class = "upload">
+<h2>Input</h2>
+
+选择图节点文件:<input type="file" id="file1" /> <input type="button" id="upload1" value="上传节点文件" /></br>
+选择图边文件:<input type="file" id="file2" /> <input type="button" id="upload2" value="上传边文件" /></br>
+</div>
+<form action = "test.php" method="POST">
+<input type = "hidden" name = "nodeFile" value = ""></input>
+<input type = "hidden" name = "edgeFile" value = ""></input>
+<div id="nodeSize" class = "appearance">
+	<h2> NodeSize </h2>
+        <ul>
+		    <input class="off" type = "radio" value = "uniform" name = "ns" > Uniform</input>
+		    <input class="on" type = "radio" value = "ranking" name = "ns" checked="true"> Ranking</input>
+        </ul>
+    <div id="uniform" class="hide">
+            sizeValue: <input type="number" name = "nodeSizeValue" step="0.5" min="1" max="30" value = "10"/>
+            
+    </div>
+    <div id="ranking" class="show">
+            Method: <input type="text" name="nodeSizeRankingMethod" value = "inDegree"/></br>
+            minSize: <input type="number" name="nodeMinSize" step="0.5" min="1" max="30" value = "1"/></br>
+            maxSize: <input type="number" name="nodeMaxSize" step="0.5" min="1" max="30" value = "10"/></br>
+    </div>
+    
+</div>
+</br>
+<div id="nodeColor" class = "appearance">
+    <h2> NodeColor </h2>
+        <ul>
+            <input class="off" type = "radio" value = "uniform" name = "nc" > Uniform</input>
+            <input class="off" type = "radio" value = "partition" name = "nc"> Partition</input>
+            <input class="on" type = "radio" value = "ranking" name = "nc" checked = "true"> Ranking</input>
+        </ul>
+    <div id="uniform" class="hide">
+            colorValue: <input type="color" name = "nodeColorValue" value = "#000000"/>
+            
+    </div>
+    <div id="partition" class="hide">
+            Method: <input type="text" name = "nodeColorPartitionMethod" value = "inDegree"/>
+            
+    </div>
+    <div id="ranking" class="show">
+            Method: <input type="text" name="nodeColorRankingMethod" value = "inDegree"/></br>
+            minColor: <input type="color" name="nodeMinColor"  value = "#FFFFFF"/></br>
+            maxColor: <input type="color" name="nodeMaxColor" value = "#000000"/></br>
+    </div>
+    
+</div>
+</br>
+<div id="edgeColor" class = "appearance">
+    <h2> edgeColor </h2>
+        <ul>
+            <input class="off" type = "radio" value = "uniform" name = "ec" > Uniform</input>
+            <input class="off" type = "radio" value = "partition" name = "ec"> Partition</input>
+            <input class="on" type = "radio" value = "ranking" name = "ec" checked="true"> Ranking</input>
+        </ul>
+    <div id="uniform" class="hide">
+            colorValue: <input type="color" name = "edgeColorValue" value = "#000000"/>
+            
+    </div>
+    <div id="partition" class="hide">
+            Method: <input type="text" name = "edgeColorPartitionMethod" value = "weight"/>
+            
+    </div>
+    <div id="ranking" class="show">
+            Method: <input type="text" name="edgeColorRankingMethod" value = "weight"/></br>
+            minColor: <input type="color" name="edgeMinColor"  value = "#FFFFFF"/></br>
+            maxColor: <input type="color" name="edgeMaxColor" value = "#000000"/></br>
+    </div>
+    
+</div>
+</br>
+<div id="layout" class = "appearance">
+    <h2> layout </h2>
+        <ul>
+            <input class="on" type = "radio" value = "ForceAtlas2" name = "lo" checked="true"> ForceAtlas2</input>
+            <input class="off" type = "radio" value = "ForceAtlas" name = "lo" > Force Atlas</input>
+            <input class="off" type = "radio" value = "RandomLayout" name = "lo" > Random</input>
+            <input class="off" type = "radio" value = "NoverlapLayout" name = "lo" > Noverlap</input>
+            <input class="off" type = "radio" value = "RotateLayout" name = "lo" > Rotate</input>
+            <input class="off" type = "radio" value = "ContractLayout" name = "lo" > Contract</input>
+            <input class="off" type = "radio" value = "ExpandLayout" name = "lo" > Expand</input>
+            <input class="off" type = "radio" value = "LabelAdjust" name = "lo" > LabelAdjust</input></br>  
+            <input class="off" type = "radio" value = "FruchtermanReingold" name = "lo" > FruchtermanReingold</input>
+            <input class="off" type = "radio" value = "YifanHuLayout" name = "lo" > YifanHu</input>
+
+            
+        </ul>
+    <div id="forceAtlas2" class="show">
+            gravity: <input type="number" name = "f2gravity" step="0.5" min="1" max="30" value = "2.0"/></br>
+            scalingRatio: <input type="number" name = "scalingRatio" step="0.5" min="1" max="30" value = "1.0"/></br>
+            edgeWeightInfluence: <input type="number" name = "edgeWeightInfluence" step="0.5" min="1" max="30" value = "1.0"/></br>
+            barnesHutTheta: <input type="number" name = "f2barnesHutTheta" step="0.5" min="1" max="30" value = "1.0"/></br>
+            barnesHutOptimize: <input type="number" name = "barnesHutOptimize" step="0.5" min="1" max="30" value = "1.0"/></br>
+            adjustSizes: <input type="radio" name = "adjustSizes" value = "true" checked="true"/> Yes </input>
+            <input type="radio" name = "adjustSizes" value = "false"/> No </input></br>
+            strongGravityMode: <input type="radio" name = "strongGravityMode" value = "true" checked="true"/> Yes </input>
+            <input type="radio" name = "strongGravityMode" value = "false"/> No </input></br>
+    </div>
+    <div id="forceAtlas" class="hide">
+            cooling: <input type="number" name = "cooling" step="0.5" min="1" max="30" value = "2.0"/></br>
+            freezeBalance: <input type="radio" name = "freezeBalance" value = "true" checked="true"/> Yes </input>
+            <input type="radio" name = "freezeBalance" value = "false"/> No </input></br>
+            freezeInertia: <input type="number" name = "freezeInertia" step="0.5" min="1" max="30" value = "2.0"/></br>
+            freezeStrength: <input type="number" name = "freezeStrength" step="0.5" min="1" max="80" value = "80.0"/></br>
+            f1gravity: <input type="number" name = "f1gravity" step="0.5" min="1" max="30" value = "1.0"/></br>
+            inertia: <input type="number" name = "inertia" step="0.5" min="1" max="30" value = "1.0"/></br>
+            maxDisplacement: <input type="number" name = "maxDisplacement" step="0.5" min="1" max="30" value = "10.0"/></br>
+            repulsionStrength: <input type="number" name = "repulsionStrength" step="0.5" min="1" max="300" value = "200.0"/></br>
+            speed: <input type="number" name = "f1speed" step="0.5" min="1" max="30" value = "1.0"/></br>
+    </div>
+    <div id="random" class="hide">
+            size: <input type="number" name="size" step="0.5" min="1" max="1000" value = "30.0"/></br>
+    </div>
+    <div id="noverlap" class="hide">
+            margin: <input type="number" name = "margin" step="0.5" min="1" max="30" value = "5.0"/></br>
+            ratio: <input type="number" name = "ratio" step="0.2" min="1" max="30" value = "1.2"/></br>
+            speed: <input type="number" name = "lapspeed" step="0.5" min="1" max="30" value = "3.0"/></br>
+    </div>
+    <div id="rotate" class="hide">
+            angle: <input type="number" name="angle" step="1" min="-180" max="180" value = "90.0"/></br>
+    </div>
+    <div id="contract" class="hide">
+            scale: <input type="number" name="contract" step="0.1" min="0" max="30" value = "1.2"/></br>
+    </div>
+    <div id="expand" class="hide">
+            scale: <input type="number" name="expand" step="0.1" min="0" max="30" value = "20.0"/></br>
+    </div>
+    <div id="label" class="hide">
+            speed: <input type="number" name="labelspeed" step="0.1" min="0" max="30" value = "1.0"/></br>
+            adjustBySize: <input type="radio" name = "adjustBySize" value = "true" checked="true"/> Yes </input>
+            <input type="radio" name = "adjustBySize" value = "false"/> No </input></br>
+    </div>
+    <div id="fr" class="hide">
+            speed: <input type="number" name="frspeed" step="0.1" min="0" max="30" value = "1.0"/></br>
+            gravity: <input type="number" name="frgravity" step="0.1" min="0" max="30" value = "10.0"/></br>
+            area: <input type="number" name="area" step="1" min="0" max="20000" value = "10000"/></br>
+    </div>
+    <div id="YifanHu" class="hide">
+            stepRatio: <input type="number" name = "stepRatio" step="0.5" min="1" max="30" value = "2.0"/></br>
+            adaptiveCooling: <input type="radio" name = "adaptiveCooling" value = "true" checked="true"/> Yes </input>
+            <input type="radio" name = "adaptiveCooling" value = "false"/> No </input></br>
+            step: <input type="number" name = "step" step="0.5" min="1" max="30" value = "2.0"/></br>
+            relativeStrength: <input type="number" name = "relativeStrength" step="0.5" min="1" max="80" value = "80.0"/></br>
+            optimalDistance: <input type="number" name = "optimalDistance" step="0.5" min="1" max="30" value = "1.0"/></br>optimalDistance
+            convergenceThreshold: <input type="number" name = "convergenceThreshold" step="0.5" min="1" max="30" value = "1.0"/></br>
+            initialStep: <input type="number" name = "initialStep" step="0.5" min="1" max="30" value = "10.0"/></br>
+            barnesHutTheta: <input type="number" name = "yfhbarnesHutTheta" step="0.5" min="1" max="300" value = "200.0"/></br>
+            quadTreeMaxLevel: <input type="number" name = "quadTreeMaxLevel" step="1" min="1" max="30" value = "1"/></br>
+    </div>
+</div>
+</br>
+    <input type="submit" value="Submit" class = "submit">
+</form> 
+
+<script>
+// JS实现选项卡切换
+window.onload = function() {
+    var myTabs = document.getElementsByClassName("appearance"); //整个div
+    for (var p = 0;p < myTabs.length;p++){
+        var myTab = myTabs[p];
+        var myUl = myTab.getElementsByTagName("ul")[0]; //一个节点
+        var myLi = myUl.getElementsByTagName("input"); //数组
+        var myDiv = myTab.getElementsByTagName("div"); //数组
+
+        for (var i = 0; i < myLi.length; i++) {
+            myLi[i].index_1 = p;
+            myLi[i].index_2 = i;
+            myLi[i].onclick = function() {
+                var p = this. index_1;
+                var i = this. index_2;
+               
+                var myTabs = document.getElementsByClassName("appearance");
+                var myTab = myTabs[p];
+                var myUl = myTab.getElementsByTagName("ul")[0];
+                var myLi = myUl.getElementsByTagName("input"); //数组
+                var myDiv = myTab.getElementsByTagName("div"); //数组
+                for (var j = 0; j < myLi.length; j++) {
+                    myLi[j].className = "off";
+                    myDiv[j].className = "hide";
+                }
+                this.className = "on";
+                myDiv[i].className = "show";
+            }
+        }
+    }
+    
+
+    
+}
+</script>
+<script src="https://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+    <script>
+        $(function () {
+            $("#upload1").click(function () {
+                
+                var formData = new FormData();
+                formData.append("myfile", document.getElementById("file1").files[0]);   
+                
+                $.ajax({
+                    url: "file.php",
+                    type: "POST",
+                    data: formData,
+                    /**
+                    *必须false才会自动加上正确的Content-Type
+                    */
+                    contentType: false,
+                    /**
+                    * 必须false才会避开jQuery对 formdata 的默认处理
+                    * XMLHttpRequest会对 formdata 进行正确的处理
+                    */
+                    processData: false,
+                    dataType: 'JSON',
+                    success: function (data) {
+                      
+                       
+                        var filename = data.filename;
+                        var nodeFile = document.getElementsByName("nodeFile")[0];
+                        nodeFile.setAttribute("value", filename);
+                        alert("上传成功！");
+                        
+                    },
+                    error: function () {
+                        alert("上传失败！");
+                        
+                    }
+                });
+            });
+            $("#upload2").click(function () {
+                
+                var formData = new FormData();
+                formData.append("myfile", document.getElementById("file2").files[0]);   
+                
+                $.ajax({
+                    url: "file.php",
+                    type: "POST",
+                    data: formData,
+                    /**
+                    *必须false才会自动加上正确的Content-Type
+                    */
+                    contentType: false,
+                    /**
+                    * 必须false才会避开jQuery对 formdata 的默认处理
+                    * XMLHttpRequest会对 formdata 进行正确的处理
+                    */
+                    processData: false,
+                    dataType: 'JSON',
+                    success: function (data) {
+                        
+                        var filename = data.filename;
+                        var edgeFile = document.getElementsByName("edgeFile")[0];
+                        edgeFile.setAttribute("value", filename);
+                        alert("上传成功！");
+                        
+
+                    },
+                    error: function () {
+                        alert("上传失败！");
+                        
+                    }
+                });
+            });
+        });
+</script>
+
+</body>
+</html>
