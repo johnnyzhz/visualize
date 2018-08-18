@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<!--[if IE 8 ]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9 ]> <html lang="en" class="ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html lang="en"> <!--<![endif]-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<title>WebNetVis</title>
+
+
+<!--[if lt IE 9]>
+<script src="js/html5shiv.js"></script>
+<![endif]-->
+
+<link href="css/normalize.css" rel="stylesheet"/>
+<link href="css/jquery-ui.css" rel="stylesheet"/>
+<link href="css/jquery.idealforms.min.css" rel="stylesheet" media="screen"/>
+
+<style type="text/css">
+body{font:normal 15px/1.5 Arial, Helvetica, Free Sans, sans-serif;color: #222;background:url(pattern.png);overflow-y:scroll;padding:60px 0 0 0;}
+#my-form{width:755px;margin:0 auto;border:1px solid #ccc;padding:3em;border-radius:3px;box-shadow:0 0 2px rgba(0,0,0,.2);}
+#comments{width:350px;height:100px;}
+.b{margin-left:20px; height:32px;}
+.my-help {
+    width: 755px;
+    margin: 3em auto;
+    border: 1px solid #ccc;
+    padding: 3em;
+    border-radius: 3px;
+    box-shadow: 0 0 2px rgba(0,0,0,.2);
+}
+/*.appearance {
+  width:270px;
+  padding:5px;
+  height:150px;
+  margin:20px;
+
+}*/
+/*.appearance ul {
+  list-style:none;
+  display:;
+  height:30px;
+  line-height:30px;
+  padding:10px 0px;
+  margin:10px 0px;
+  border-bottom:2px #C88 solid;
+}
+.appearance ul li {
+  background:#FFF;
+  cursor:pointer;
+  float:left;
+  list-style:none height:29px;
+  line-height:29px;
+  padding:0px 10px;
+  margin:0px 10px;
+  border:1px solid #BBB;
+  border-bottom:2px solid #C88;
+}
+.appearance ul li.on {
+  border-top:2px solid gray;
+  border-bottom:2px solid #FFF;
+}
+.appearance div {
+  height:100px;
+  width:250px;
+  line-height:24px;
+  border-top:none;
+  padding:1px;
+  border:1px solid #336699;
+  padding:10px;
+}*/
+.hide {
+  display:none;
+}
+</style>
+
+</head>
+<body>
+
+
+<div class="row">
+
+  <div class="eightcol last">
+
+    <!-- Begin Form -->
+
+    <div id="my-form">
+
+        
+        <form action = "test.php" method="POST">
+          <input type = "hidden" name = "nodeFile" value = ""></input>
+          <input type = "hidden" name = "edgeFile" value = ""></input>
+          <input type = "hidden" name = "posFile" value = ""></input>
+          <input type = "hidden" name = "ns" value = "uniform"></input>
+          <input type = "hidden" name = "nc" value = "uniform"></input>
+          <input type = "hidden" name = "ec" value = "uniform"></input>
+          <input type = "hidden" name = "lo" value = "ForceAtlas2"></input>
+          <input type = "hidden" name = "adjustSizes" value = "true"></input>
+          <input type = "hidden" name = "strongGravityMode" value = "true"></input>
+          <input type = "hidden" name = "freezeBalance" value = "true"></input>
+          <input type = "hidden" name = "adjustBySize" value = "true"></input>
+          <input type = "hidden" name = "adaptiveCooling" value = "true"></input>
+          <input type = "hidden" name = "barnesHutOptimize" value = "true"></input>
+          <input type = "hidden" name = "public" value = "false"></input>
+          <section name="Info">
+            <div><label>Graph Name:</label><input type="text" name="graph" value="myGraph"/> </div>
+            <div><label>Author:</label><input type="text" name="author" value="anonymous"/> </div>
+            <div><label>Public: </label>
+                  <select id="public">
+                    <option value="false"> No</option>
+                    <option value="true"> Yes</option>
+                    
+                  </select>
+            </div>
+            
+          </section>
+          <section name="Input">
+            <div><label>Nodes:</label><input type="file" id="file1" name="f2"/> <input class="b" type="button" id="upload1" value="upload" /></div>
+            <div><label>Edges:</label><input type="file" id="file2" name="f3"/> <input class="b" type="button" id="upload2" value="upload" /></div>
+          
+          </section>
+          <section name="NodeSize" id="nodeSize" >
+            
+            
+            <!-- <div><label>Method:</label><input class="off" type = "radio" value = "uniform" name = "ns" > Uniform</input>
+              <input class="on" type = "radio" value = "ranking" name = "ns" checked="true"> Ranking</input></div> -->
+              <div><label>Type:</label>
+              <select id="ns" >
+                <option value="uniform"> Uniform</option>
+                <option value="ranking"> Ranking</option>
+              </select>&nbsp; 
+              <button type="button" class="btn btn-primary" name="ns" onclick="help(this)">View Help</button>
+              </div>
+            
+           
+              <div id="ns_uniform" class ="show"><div><label>sizeValue:</label> <input type="number" name = "nodeSizeValue" step="0.5" min="1" max="30" value = "10"/></div></div>          
+            
+              <div id= "ns_ranking" class="hide">
+              <div><label>Method:</label><input type="text" name="nodeSizeRankingMethod" value = "inDegree"/></div>
+              <div><label>minSize:</label><input type="number" name="nodeMinSize" step="0.5" min="1" max="30" value = "1"/></div>
+              <div><label>maxSize:</label><input type="number" name="nodeMaxSize" step="0.5" min="1" max="30" value = "10"/></div>
+              </div>
+            
+          </section>
+          <section name="NodeColor" id="nodeColor" >
+            
+            
+            <!-- <div><label>Method:</label><input class="off" type = "radio" value = "uniform" name = "ns" > Uniform</input>
+              <input class="on" type = "radio" value = "ranking" name = "ns" checked="true"> Ranking</input></div> -->
+              <div><label>Type:</label>
+              <select id="nc" >
+                <option value="uniform"> Uniform</option>
+                <option value="partition"> Partition</option>
+                <option value="ranking"> Ranking</option>
+              </select>&nbsp; 
+              <button type="button" class="btn btn-primary" name="nc" onclick="help(this)">View Help</button>
+              </div>
+            
+           
+              <div id="nc_uniform" class ="show"><div><label>colorValue:</label> <input type="color" name = "nodeColorValue" value = "#000000"/></div></div>          
+            
+              <div id= "nc_partition" class="hide">
+              <div><label>Method:</label><input type="text" name = "nodeColorPartitionMethod" value = "inDegree"/></div>
+              </div>
+              <div id="nc_ranking"  class="hide">
+                <div><label>Method:</label><input type="text" name="nodeColorRankingMethod" value = "inDegree"/></div>
+                <div><label>minColor:</label><input type="color" name="nodeMinColor"  value = "#FFFFFF"/></div>
+                <div><label>maxColor:</label><input type="color" name="nodeMaxColor" value = "#000000"/></div>
+              </div>
+            
+          </section>
+          <section name="EdgeColor" id="edgeColor" >
+            
+            
+            <!-- <div><label>Method:</label><input class="off" type = "radio" value = "uniform" name = "ns" > Uniform</input>
+              <input class="on" type = "radio" value = "ranking" name = "ns" checked="true"> Ranking</input></div> -->
+              <div><label>Type:</label>
+              <select id="ec" >
+                <option value="uniform"> Uniform</option>
+                <option value="ranking"> Ranking</option>
+              </select>&nbsp; 
+              <button type="button" class="btn btn-primary" name="ec" onclick="help(this)">View Help</button>
+              </div>
+            
+           
+              <div id="ec_uniform" class ="show"><div><label>colorValue:</label> <input type="color" name = "edgeColorValue" value = "#000000"/></div></div>          
+            
+              
+              <div id="ec_ranking"  class="hide">
+                <div><label>Method:</label><input type="text" name="edgeColorRankingMethod" value = "weight"/></div>
+                <div><label>minColor:</label><input type="color" name="edgeMinColor"  value = "#FFFFFF"/></div>
+                <div><label>maxColor:</label><input type="color" name="edgeMaxColor" value = "#000000"/></div>
+              </div>
+            
+          </section>
+          <section name="Layout" id="layout">
+            
+            
+            <!-- <div><label>Method:</label><input class="off" type = "radio" value = "uniform" name = "ns" > Uniform</input>
+              <input class="on" type = "radio" value = "ranking" name = "ns" checked="true"> Ranking</input></div> -->
+              <div><label>Type:</label>
+              <select id="lo" >
+                <option value="ForceAtlas2"> ForceAtlas2</option>
+                <option value="ForceAtlas"> Force Atlas</option>
+                <option value="RandomLayout"> RandomLayout</option>
+                <option value="NoverlapLayout"> NoverlapLayout</option>
+                <option value="RotateLayout"> RotateLayout</option>
+                <option value="ContractLayout"> ContractLayout</option>
+                <option value="ExpandLayout"> ExpandLayout</option>
+                <option value="LabelAdjust"> LabelAdjust</option>
+                <option value="FruchtermanReingold"> FruchtermanReingold</option>
+                <option value="YifanHuLayout"> YifanHuLayout</option>
+                <option value="Customized"> Customized</option>
+              </select>&nbsp; 
+              <button type="button" class="btn btn-primary" name="lo" onclick="help(this)">View Help</button>
+              </div>
+            
+           
+              <div id="ForceAtlas2" class ="show">
+                <div><label>gravity: </label><input type="number" name = "f2gravity" step="0.5" min="1" max="30" value = "2.0"/></div>
+                <div><label>scalingRatio: </label><input type="number" name = "scalingRatio" step="0.5" min="1" max="30" value = "1.0"/></div>
+                <div><label>edgeWeightInfluence: </label><input type="number" name = "edgeWeightInfluence" step="0.5" min="1" max="30" value = "1.0"/></div>
+                <div><label>barnesHutTheta: </label><input type="number" name = "f2barnesHutTheta" step="0.1" min="1" max="30" value = "1.2"/></div>
+                <div><label>barnesHutOptimize: </label>
+                  <select id="barnesHutOptimize" >
+                    <option value="true"> Yes</option>
+                    <option value="false"> No</option>
+                  </select></div>
+                <div><label>adjustSizes: </label>
+                  <select id="adjustSizes" >
+                    <option value="true"> Yes</option>
+                    <option value="false"> No</option>
+                  </select>
+                <!-- <input type="radio" name = "adjustSizes" value = "false"/> No </input></div> -->
+                </div>
+                <div><label>strongGravityMode: </label>
+                <!-- <input type="checkbox" name = "strongGravityMode" value = "true" checked="true"/> Yes </input> -->
+                <!-- <input type="radio" name = "strongGravityMode" value = "false"/> No </input></br> -->
+                  <select id="strongGravityMode" >
+                    <option value="true"> Yes</option>
+                    <option value="false"> No</option>
+                  </select>
+                </div>
+              </div>          
+            
+              <div id= "ForceAtlas" class="hide">
+                <div><label>freezeBalance: </label>
+                  <select id="freezeBalance" >
+                    <option value="true"> Yes</option>
+                    <option value="false"> No</option>
+                  </select>
+                </div>
+                <div><label>freezeInertia: </label><input type="number" name = "freezeInertia" step="0.5" min="1" max="30" value = "2.0"/></div>
+                <div><label>freezeStrength: </label><input type="number" name = "freezeStrength" step="0.5" min="1" max="80" value = "80.0"/></div>
+                <div><label>f1gravity: </label><input type="number" name = "f1gravity" step="0.5" min="1" max="30" value = "1.0"/></div>
+                <div><label>inertia: </label><input type="number" name = "inertia" step="0.5" min="1" max="30" value = "1.0"/></div>
+                <div><label>maxDisplacement: </label><input type="number" name = "maxDisplacement" step="0.5" min="1" max="30" value = "10.0"/></div>
+                <div><label>repulsionStrength: </label><input type="number" name = "repulsionStrength" step="0.5" min="1" max="300" value = "200.0"/></div>
+                <div><label>speed: </label><input type="number" name = "f1speed" step="0.5" min="1" max="30" value = "1.0"/></div>
+              </div>
+              <div id="RandomLayout"  class="hide">
+                <div><label>size: </label><input type="number" name="size" step="0.5" min="1" max="1000" value = "30.0"/></div>
+              </div>
+              <div id="NoverlapLayout"  class="hide">
+                <div><label>margin: </label><input type="number" name = "margin" step="0.5" min="1" max="30" value = "5.0"/></div>
+                <div><label>ratio: </label><input type="number" name = "ratio" step="0.2" min="1" max="30" value = "1.2"/></div>
+                <div><label>speed: </label><input type="number" name = "lapspeed" step="0.5" min="1" max="30" value = "3.0"/></div>
+              </div>
+              <div id="RotateLayout"  class="hide">
+                <div><label>angle: </label><input type="number" name="angle" step="1" min="-180" max="180" value = "90.0"/></div>
+              </div>
+              <div id="ContractLayout"  class="hide">
+                <div><label>scale: </label><input type="number" name="contract" step="0.1" min="0" max="30" value = "1.2"/></div>
+              </div>
+              <div id="ExpandLayout"  class="hide">
+                <div><label>scale: </label><input type="number" name="expand" step="0.1" min="0" max="30" value = "20.0"/></div>
+              </div>
+              <div id="LabelAdjust"  class="hide">
+                <div><label>speed: </label><input type="number" name="labelspeed" step="0.1" min="0" max="30" value = "1.0"/></div>
+                <div><label>adjustBySize: </label>
+                  <select id="adjustBySize">
+                    <option value="true"> Yes</option>
+                    <option value="false"> No</option>
+                  </select>
+                </div>
+              </div>
+              <div id="FruchtermanReingold"  class="hide">
+               
+                <div><label>speed: </label><input type="number" name="frspeed" step="0.1" min="0" max="30" value = "1.0"/></div>
+                <div><label>gravity: </label><input type="number" name="frgravity" step="0.1" min="0" max="30" value = "10.0"/></div>
+                <div><label>area: </label><input type="number" name="area" step="1" min="0" max="20000" value = "10000"/></div>
+              </div>
+              <div id="YifanHuLayout"  class="hide">
+                <div><label>stepRatio: </label><input type="number" name = "stepRatio" step="0.5" min="1" max="30" value = "2.0"/></div>
+                <div><label>adaptiveCooling: </label>
+                  <select id="adaptiveCooling">
+                    <option value="true"> Yes</option>
+                    <option value="false"> No</option>
+                  </select>
+                </div>
+                
+                <div><label>relativeStrength: </label> <input type="number" name = "relativeStrength" step="0.5" min="1" max="80" value = "80.0"/></div>
+                <div><label>optimalDistance: </label><input type="number" name = "optimalDistance" step="0.5" min="1" max="30" value = "1.0"/></div>
+                <div><label>convergenceThreshold: </label><input type="number" name = "convergenceThreshold" step="0.5" min="1" max="30" value = "1.0"/></div>
+                <div><label>initialStep: </label><input type="number" name = "initialStep" step="0.5" min="1" max="30" value = "10.0"/></div>
+                <div><label>barnesHutTheta: </label><input type="number" name = "yfhbarnesHutTheta" step="0.5" min="1" max="300" value = "200.0"/></div>
+                <div><label>quadTreeMaxLevel: </label><input type="number" name = "quadTreeMaxLevel" step="1" min="1" max="30" value = "1"/></div>
+              </div>
+              <div id="Customized"  class="hide">
+                <div><label>Position:</label><input type="file" id="file3" name="f3"/> <input class="b" type="button" id="upload3" value="upload" /></div>
+              </div>
+
+            
+          </section>
+
+          
+
+          <div><hr/></div>
+
+          <div>
+            <button type="submit">Submit</button>
+            
+          </div>
+        </form>
+    </div>
+
+    <!-- End Form -->
+    <div class="my-help hide" id="nc_help_partition">     
+        <p >
+          <b>Method:</b> Nodes are partitioned into different groups
+according to the attribute and nodes within a group are of the same color. 
+        </p>        
+    </div>
+    <div class="my-help hide" id="nc_help_uniform">
+        <p >
+          <b>colorValue:</b> The color value of all nodes. 
+        </p>
+    </div>
+    <div class="my-help hide" id="nc_help_ranking">
+    <p >
+          <b>Method:</b> The attribute which the nodes' colors depend on. The supporting attributes include the in-degree(number of nodes point to the node), out-degree(number of nodes the node points to), degree(sum of in-degree and out-degree) and other numerical attributes of the nodes contained in the csv file.   
+    </p>
+    <p >
+      <b>minColor:</b> The minimum value of color of all nodes. 
+    </p>
+    <p >
+      <b>maxColor:</b> The maximum value of color of all nodes. 
+    </p>
+    </div>
+    <div class="my-help hide" id="ns_help_ranking">
+    <p>
+          <b>Method:</b> The attribute which the nodes' sizes depend on. The supporting attributes include the in-degree(number of nodes point to the node), out-degree(number of nodes the node points to), degree(sum of in-degree and out-degree) and other numerical attributes of the nodes contained in the csv file.   
+    </p>
+    <p>
+      <b>minSize:</b> The minimum size of all nodes. 
+    </p>
+    <p>
+      <b>maxSize:</b> The maximum size of all nodes. 
+    </p>
+    </div>
+    <div class="my-help hide" id="ns_help_uniform">
+      <b>sizeValue:</b> The size value of all nodes. 
+    </div>
+    <div class="my-help hide" id="ec_help_ranking">
+    <p >
+      <b>Method:</b>  The colors of edges are ranked by the weights.
+    </p>
+    <p >
+      <b>minColor:</b> The minimum value of color of all edges. 
+    </p>
+    <p >
+      <b>maxColor:</b> The maximum value of color of all edges. 
+    </p>
+    </div>
+    <div class="my-help hide" id="ec_help_uniform">
+    <p>
+      <b>colorValue:</b> The color value of all edges. 
+    </p>
+    </div>
+    <div class="my-help hide" id="lo_help_ForceAtlas2">
+    <p >
+      <b>gravity:</b> Attract the nodes to the center. Prevents islands from  drifting away. 
+    </p>
+    <p >
+      <b>strongGravityMode:</b> A stronger gravity law.
+    </p>
+    <p >
+      <b>barnesHutTheta:</b>Theta of the Barnes Hut optimization.
+    </p>
+    <p >
+      <b>edgeWeightInfluence:</b>How much influence you give to the edges weight.
+    </p>
+    <p >
+      <b>scalingRatio:</b>How much repulsion you want. More makes a more sparse graph.
+    </p>
+    <p >
+      <b>barnesHutOptimize:</b>Barnes Hut optimization.
+    </p>
+    <p >
+      <b>adjustSizes:</b>Use only when spatialized.
+    </p>
+    </div>
+    <div class="my-help hide" id="lo_help_ForceAtlas">
+    <p >
+      <b>inertia:</b>  Conservation of node speed at each new pass.
+    </p>
+    <p >
+      <b>repulsionStrength:</b>  How strong does each node rejects others.
+    </p>
+    <p >
+      <b>maxDisplacement:</b>  This is limiting each node's displacement.
+    </p>
+    <p >
+      <b>speed:</b> Permits to increase convergence speed at the price of a precision loss.
+    </p>
+    <p >
+      <b>freezeStrength:</b> Power of the auto stabilize function.
+    </p>
+    <p >
+      <b>f1gravity:</b> This force attracts all the nodes to the center to avoid dispersion of disconnected components. 
+    </p>
+    <p >
+      <b>freezeInertia:</b> This parameter represents the auto-adaptiveness of the anti-flickering function.x
+    </p>
+    <p >
+      <b>freezeBalance:</b> Activates the freezing of unstable nodes. Despite some loss of efficiency, this prevents most of nodes flickering.
+    </p>
+    </div>
+    <div class="my-help hide" id="lo_help_RandomLayout">
+    <p>
+      <b>size:</b>  The size of the space to randomly distribute the nodes.
+    </p>
+    </div>
+    <div class="my-help hide" id="lo_help_NoverlapLayout">
+    <p >
+      <b>speed:</b>  Speed.
+    </p>
+    <p >
+      <b>ratio:</b>  Ratio.
+    </p>
+    <p >
+      <b>margin:</b> Margin.
+    </p>
+    </div>
+    <div class="my-help hide" id="lo_help_RotateLayout">
+    <p>
+      <b>angle:</b>  Clockwise rotation angle in degrees. 
+    </p>
+    </div>
+    <div class="my-help hide" id="lo_help_ContractLayout">
+    <p>
+       <b>scale:</b>  Scale factor.
+    </p>
+    </div>
+    <div class="my-help hide" id="lo_help_ExpandLayout">
+    <p>
+      <b>scale:</b>  Scale factor. 
+    </p>
+    </div>
+    <div class="my-help hide" id="lo_help_LabelAdjust">
+    <p >
+      <b>speed:</b>  Speed factor.
+    </p>
+    <p >
+      <b>adjustBySize:</b>  Include node size in repulsion.
+    </p>
+    </div>
+    <div class="my-help hide" id="lo_help_FruchtermanReingold">
+    <p >
+      <b>gravity:</b>  This force attracts all nodes to the center to avoid dispersion of disconnected components.
+    </p>
+    <p >
+      <b>speed:</b>  Increase convergence speed at the price of a precision lose.
+    </p>
+    <p >
+      <b>area:</b>  The graph size area.
+    </p>
+    </div>
+    <div class="my-help hide" id="lo_help_YifanHuLayout">
+    <p >
+      <b>barnesHutTheta:</b>  The theta parameter for Barnes-Hut opening criteria. Smaller values mean more accuracy.
+    </p>
+    <p >
+      <b>quadTreeMaxLevel:</b>  The maximum value to be used in the quadtree representation. Greater values mean more accuarcy.
+    </p>
+    <p >
+      <b>initialStep:</b>  The initial step size used in the integration phase. Set this value to a meaningful size compared to the optimal distance.
+    </p>
+    <p >
+      <b>convergenceThreshold:</b> Relative energy convergence threshold. Smaller values mean more accuracy.
+    </p>
+    <p >
+      <b>optimalDistance:</b> The natural length of the springs. Bigger value mean nodes will be farther apart. 
+    </p>
+    <p >
+      <b>relativeStrength:</b> The relative strength between electrical force(repulsion) and spring force(attraction). 
+    </p>
+    <p >
+      <b>adaptiveCooling:</b> Controls the use of adaptive cooling. It is used to help the layout algorithm to avoid energy local minimal.
+    </p>
+    <p >
+      <b>stepRatio:</b> The ratio used to update the step size across iterations.
+    </p>
+    </div>
+    <div class="my-help hide" id="lo_help_Customized">
+    <p>
+      <b>position:</b>  The csv file which contains 'x' and 'y' columns.
+    </p>
+    </div>
+
+  </div>
+</div>
+
+
+<script type="text/javascript" src="js/jquery-1.8.2.min.js"></script>
+<script type="text/javascript" src="js/jquery-ui.min.js"></script>
+<script type="text/javascript" src="js/jquery.idealforms.js"></script>
+<script type="text/javascript">
+var active_help;
+function help(e)
+{
+  var helpType = e.getAttribute("name");
+
+  var select = "#"+helpType;
+  var selectValue = $(select).val();
+  var selectId = helpType+"_help_"+selectValue;
+  if(active_help!=null)
+  {
+    var hideSection = document.getElementById(active_help);
+    hideSection.setAttribute("class", "my-help hide");
+  }
+  active_help = selectId;
+  //alert(selectId);
+  var showSection = document.getElementById(selectId);
+  showSection.setAttribute("class", "my-help show");
+
+}
+$(function(){
+  $("#ns").change(function(){
+      //alert(this.value);
+      
+      var ns = document.getElementsByName("ns")[0];
+      
+      var show = null;
+      //alert(show.id);
+      
+      var hide = null;
+      if(this.value=="uniform")
+      {
+        ns.setAttribute("value", "uniform");
+        show = document.getElementById("ns_uniform");
+        hide = document.getElementById("ns_ranking");
+      }
+      else
+      {
+        ns.setAttribute("value", "ranking");
+        show = document.getElementById("ns_ranking");
+        hide = document.getElementById("ns_uniform");
+      }
+      hide.setAttribute("class", "hide");
+      show.setAttribute("class","show");
+  });
+  $("#nc").change(function(){
+      //alert(this.value);
+      
+      var nc = document.getElementsByName("nc")[0];
+      nc.setAttribute("value", this.value);
+      var show = null;
+      //alert(show.id);
+      var hide_1 = null;
+      var hide_2 = null;
+      if(this.value=="uniform")
+      {
+        show = document.getElementById("nc_uniform");
+        hide_1 = document.getElementById("nc_ranking");
+        hide_2 = document.getElementById("nc_partition");
+      }
+      else
+      {
+        
+        if(this.value=="ranking"){
+          show = document.getElementById("nc_ranking");
+          hide_1 = document.getElementById("nc_uniform");
+          hide_2 = document.getElementById("nc_partition");
+        }
+        else{
+          show = document.getElementById("nc_partition");
+          hide_1 = document.getElementById("nc_uniform");
+          hide_2 = document.getElementById("nc_ranking");
+        }
+      }
+      hide_1.setAttribute("class", "hide");
+      hide_2.setAttribute("class", "hide");
+      show.setAttribute("class", "show");
+  });
+  $("#ec").change(function(){
+      //alert(this.value);
+      
+      var ec = document.getElementsByName("ec")[0];
+      ec.setAttribute("value", this.value);
+      var show = null;
+      //alert(show.id);
+      var hide_1 = null;
+      
+      if(this.value=="uniform")
+      {
+        show = document.getElementById("ec_uniform");
+        hide_1 = document.getElementById("ec_ranking");
+        
+      }
+      else
+      {
+        show = document.getElementById("ec_ranking");
+        hide_1 = document.getElementById("ec_uniform");
+       
+      }
+      hide_1.setAttribute("class", "hide");
+      show.setAttribute("class", "show");
+  });
+  $("#strongGravityMode").change(function(){
+    var sg = document.getElementsByName("strongGravityMode")[0];
+    sg.setAttribute("value", this.value);
+  });
+  $("#adjustSizes").change(function(){
+    var as = document.getElementsByName("adjustSizes")[0];
+    as.setAttribute("value", this.value);
+  });
+  $("#public").change(function(){
+    var pb = document.getElementsByName("public")[0];
+    pb.setAttribute("value", this.value);
+  });  
+  $("#barnesHutOptimize").change(function(){
+    var bho = document.getElementsByName("barnesHutOptimize")[0];
+    bho.setAttribute("value", this.value);
+  }); 
+  $("#lo").change(function(){
+    
+    var layout = document.getElementById("layout");
+    
+    var hide = layout.getElementsByClassName("show")[0];
+    hide.setAttribute("class", "hide");
+    var show = document.getElementById(this.value);
+    //alert(show.id);
+    show.setAttribute("class", "show");
+    //alert(show.innerHTML);
+    var lo = document.getElementsByName("lo")[0];
+    lo.setAttribute("value", this.value);
+  });
+  $("#freezeBalance").change(function(){
+    var fb = document.getElementsByName("freezeBalance")[0];
+    fb.setAttribute("value", this.value);
+  });
+  $("#adjustBySize").change(function(){
+    var ab = document.getElementsByName("adjustBySize")[0];
+    ab.setAttribute("value", this.value)});
+  $("#adaptiveCooling").change(function(){
+    var ac = document.getElementsByName("adaptiveCooling")[0];
+    ac.setAttribute("value", this.value);
+  });
+  $("#upload1").click(function () {
+                
+                var formData = new FormData();
+                formData.append("myfile", document.getElementById("file1").files[0]);   
+                
+                $.ajax({
+                    url: "file.php",
+                    type: "POST",
+                    data: formData,                    
+                    contentType: false,                   
+                    processData: false,
+                    dataType: 'JSON',
+                    success: function (data) {
+                        var filename = data.filename;
+                        var nodeFile = document.getElementsByName("nodeFile")[0];
+                        nodeFile.setAttribute("value", filename);
+                        if(data.status){
+                            alert("上传成功！");
+                        }
+                        else{
+                            alert("上传失败!");
+                        }                        
+                    },
+                    error: function () {
+                        alert("上传失败！");                        
+                    }
+                });
+            });
+            $("#upload2").click(function () {
+                
+                var formData = new FormData();
+                formData.append("myfile", document.getElementById("file2").files[0]);                   
+                $.ajax({
+                    url: "file.php",
+                    type: "POST",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    dataType: 'JSON',
+                    success: function (data) {
+                        
+                        var filename = data.filename;
+                        var edgeFile = document.getElementsByName("edgeFile")[0];
+                        edgeFile.setAttribute("value", filename);
+                        if(data.status){
+                            alert("上传成功！");
+                        }
+                        else{
+                            alert("上传失败！");
+                        }
+
+                    },
+                    error: function () {
+                        alert("上传失败！");
+                        
+                    }
+                });
+            });
+            $("#upload3").click(function () {
+                
+                var formData = new FormData();
+                formData.append("myfile", document.getElementById("file3").files[0]);   
+                
+                $.ajax({
+                    url: "file.php",
+                    type: "POST",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    dataType: 'JSON',
+                    success: function (data) {
+                        
+                        var filename = data.filename;
+                        var posFile = document.getElementsByName("posFile")[0];
+                        posFile.setAttribute("value", filename);
+                        if(data.status){
+                            alert("上传成功！");
+                        }
+                        else{
+                            alert("上传失败！");
+                        }
+
+                    },
+                    error: function () {
+                        alert("上传失败！");
+                        
+                    }
+                });
+            });
+});
+
+
+
+
+</script>
+
+<script type="text/javascript">
+var options = {
+
+	onFail: function(){
+		alert( $myform.getInvalid().length +' invalid fields.' )
+	},
+
+	inputs: {
+		
+    
+		
+		
+	}
+	
+};
+
+var $myform = $('#my-form').idealforms(options).data('idealforms');
+
+$('#reset').click(function(){
+	$myform.reset().fresh().focusFirst()
+});
+
+$myform.focusFirst();
+</script>
+
+</body>
+</html>
+
+

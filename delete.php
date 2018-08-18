@@ -46,26 +46,13 @@ function deldir($dir) {
 // }
 #echo shell_exec("id -a");
 $filename = $_POST['location'];
-$filename= substr($filename,strrpos($filename, '/') -21,13);
-$filename = "data/".$filename;
-#echo $filename;
+$filename= substr($filename,strrpos($filename, '/') -18,18);
+
+//echo $filename;
 $dh = opendir($filename);
 $data = array();
 $idx = 0;
-// if (is_writable($filename))
-// {
-// 	echo "yes";
-// }
-// else{
-// 	if(chmod($filename, 0x1FF))
-// 	{
-// 		echo "changed!";
-// 	}
-// 	else{
-// 		$perms = substr(sprintf('%o', fileperms($filename)), -4);  
-// 		echo $perms; 
-// 	}
-// }
+
 $res = deldir($filename);
 ob_clean();
 header("Location:index.html"); 

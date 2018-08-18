@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style type="text/css">
+.hide {
+  display:none;
+}
+
+</style>
+  <title>WebNetVis</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="/sigma/examples/lib/jquery-2.1.1.min.js"></script>
+  <script src="/sigma/src/sigma.core.js"></script>
+  <script src="/sigma/src/conrad.js"></script>
+  <script src="/sigma/src/utils/sigma.utils.js"></script>
+  <script src="/sigma/src/utils/sigma.polyfills.js"></script>
+  <script src="/sigma/src/sigma.settings.js"></script>
+  <script src="/sigma/src/classes/sigma.classes.dispatcher.js"></script>
+  <script src="/sigma/src/classes/sigma.classes.configurable.js"></script>
+  <script src="/sigma/src/classes/sigma.classes.graph.js"></script>
+  <script src="/sigma/src/classes/sigma.classes.camera.js"></script>
+  <script src="/sigma/src/classes/sigma.classes.quad.js"></script>
+  <script src="/sigma/src/classes/sigma.classes.edgequad.js"></script>
+  <script src="/sigma/src/captors/sigma.captors.mouse.js"></script>
+  <script src="/sigma/src/captors/sigma.captors.touch.js"></script>
+  <script src="/sigma/src/renderers/sigma.renderers.canvas.js"></script>
+  <script src="/sigma/src/renderers/sigma.renderers.webgl.js"></script>
+  <script src="/sigma/src/renderers/sigma.renderers.svg.js"></script>
+  <script src="/sigma/src/renderers/sigma.renderers.def.js"></script>
+  <script src="/sigma/src/renderers/webgl/sigma.webgl.nodes.def.js"></script>
+  <script src="/sigma/src/renderers/webgl/sigma.webgl.nodes.fast.js"></script>
+  <script src="/sigma/src/renderers/webgl/sigma.webgl.edges.def.js"></script>
+  <script src="/sigma/src/renderers/webgl/sigma.webgl.edges.fast.js"></script>
+  <script src="/sigma/src/renderers/webgl/sigma.webgl.edges.arrow.js"></script>
+  <script src="/sigma/src/renderers/canvas/sigma.canvas.labels.def.js"></script>
+  <script src="/sigma/src/renderers/canvas/sigma.canvas.hovers.def.js"></script>
+  <script src="/sigma/src/renderers/canvas/sigma.canvas.nodes.def.js"></script>
+  <script src="/sigma/src/renderers/canvas/sigma.canvas.edges.def.js"></script>
+  <script src="/sigma/src/renderers/canvas/sigma.canvas.edges.curve.js"></script>
+  <script src="/sigma/src/renderers/canvas/sigma.canvas.edges.arrow.js"></script>
+  <script src="/sigma/src/renderers/canvas/sigma.canvas.edges.curvedArrow.js"></script>
+  <script src="/sigma/src/renderers/canvas/sigma.canvas.edgehovers.def.js"></script>
+  <script src="/sigma/src/renderers/canvas/sigma.canvas.edgehovers.curve.js"></script>
+  <script src="/sigma/src/renderers/canvas/sigma.canvas.edgehovers.arrow.js"></script>
+  <script src="/sigma/src/renderers/canvas/sigma.canvas.edgehovers.curvedArrow.js"></script>
+  <script src="/sigma/src/renderers/canvas/sigma.canvas.extremities.def.js"></script>
+  <script src="/sigma/src/renderers/svg/sigma.svg.utils.js"></script>
+  <script src="/sigma/src/renderers/svg/sigma.svg.nodes.def.js"></script>
+  <script src="/sigma/src/renderers/svg/sigma.svg.edges.def.js"></script>
+  <script src="/sigma/src/renderers/svg/sigma.svg.edges.curve.js"></script>
+  <script src="/sigma/src/renderers/svg/sigma.svg.labels.def.js"></script>
+  <script src="/sigma/src/renderers/svg/sigma.svg.hovers.def.js"></script>
+  <script src="/sigma/src/middlewares/sigma.middlewares.rescale.js"></script>
+  <script src="/sigma/src/middlewares/sigma.middlewares.copy.js"></script>
+  <script src="/sigma/src/misc/sigma.misc.animation.js"></script>
+  <script src="/sigma/src/misc/sigma.misc.bindEvents.js"></script>
+  <script src="/sigma/src/misc/sigma.misc.bindDOMEvents.js"></script>
+  <script src="/sigma/src/misc/sigma.misc.drawHovers.js"></script>
+  <!-- END SIGMA IMPORTS -->
+  <script src="/sigma/plugins/sigma.parsers.json/sigma.parsers.json.js"></script>
+  <script src="/sigma/plugins/sigma.plugins.dragNodes/sigma.plugins.dragNodes.js"></script>
+  <script src="/sigma/plugins/sigma.plugins.changeType/sigma.plugins.changeType.js"></script>
+  <script src="/sigma/plugins/sigma.plugins.changeType/sigma.plugins.changeWidth.js"></script>
+  <script src="/sigma/plugins/sigma.exporters.svg/sigma.exporters.svg.js"></script>
+
+</head>
+<body>
+<div class="container">
+  <div class="jumbotron text-center">
+    <h1>WebNetVis</h1>
+    <p class="text-right">Tool for visualization of network</p>
+</div>
+<div class="container">
+  <ul class="nav nav-pills">
+    <li class="active"><a href="javascript:void(0)" value="introduction" onclick="introduction(this)">Introduction</a></li>
+    <li><a href="javascript:void(0)" value="step" onclick="introduction(this)">Pipeline</a></li>
+    <li><a href="javascript:void(0)" value="functions" onclick="introduction(this)">Functions</a>
+    <li><a href="javascript:void(0)" value="example" onclick="introduction(this)">Example</a></li>
+    <li><a href="javascript:void(0)" value="graphs" onclick="introduction(this)">List of Networks</a></li>
+    <li><a href="/uploadInfo.html" >Try it now</a></li>
+  </ul>
+</div>
+<hr style="height:1px;border:none;border-top:1px solid #555555;" />
+<div class="container" >
+<div class="well well-lg show" id="introduction">
+<h3 >
+  WebNetVis is an online software generating interactive graphs for network visualization. It provides a series of options regarding the functions of the graph to choose from. The graph can also be easily exported for further use.
+</h3>
+</div>
+</div>
+<div class="container" >
+<div class="well well-lg hide" id="step">
+<h4 class="text-center">
+The steps to generate a graph are as follows:
+</h4>
+<div style="text-align:center">
+<img src="flowchart.svg"/>
+</div>
+</div>
+</div>
+<div class="container" >
+<div class="well well-lg hide" id="functions">
+
+<div class="list-group">
+    <div class="list-group-item active">
+        <h4 class="list-group-item-heading">
+            Input
+        </h4>
+    </div>
+    <div class="list-group-item">
+        <h4 class="list-group-item-heading">
+            <b>Nodes</b>
+        </h4>
+        <p class="list-group-item-text">
+            A csv file containing the information of nodes.
+            Columns 'Id' and 'Label' are required.
+        </p>
+    </div>
+    <div class="list-group-item">
+        <h4 class="list-group-item-heading">
+            <b>Edges</b>
+        </h4>
+        <p class="list-group-item-text">
+            A csv file containing the information of edges.
+            Columns 'Source' and 'Target' are required, which depend on the
+            'Id' column of the node file.
+        </p>
+    </div>
+</div>
+<div class="list-group">
+    <div class="list-group-item active">
+        <h4 class="list-group-item-heading">
+            NodeSize
+        </h4>
+    </div>
+   
+    <div class="list-group-item" >
+        <h4 class="list-group-item-heading">
+          <label style="margin-right: 0.5cm">Uniform</label> <button type="button" class="btn btn-primary" name="nsu" onclick="showParameter(this)">parameters</button>
+        </h4>
+        
+        <p class="list-group-item-text">
+            All of the nodes are of the same size. 
+        </p>
+    </div>
+    
+    <div id="nsu" class="list-group hide">
+      <div class="list-group-item">
+        <p class="list-group-item-text">
+          <b>sizeValue:</b> The size value of all nodes. 
+        </p>
+      </div>      
+    </div>
+    
+    <div class="list-group-item">
+        <h4 class="list-group-item-heading">
+        <label style="margin-right: 0.5cm">Ranking</label> <button type="button" class="btn btn-primary" name="nsr" onclick="showParameter(this)">parameters</button></h4>
+        <p class="list-group-item-text">
+            Sizes are ranked by certain attribute of nodes.
+        </p>
+    </div>
+   
+    <div id="nsr" class="list-group hide">
+      <div class="list-group-item">
+        <p class="list-group-item-text">
+          <b>Method:</b> The attribute which the nodes' sizes depend on. The supporting attributes include the in-degree(number of nodes point to the node), out-degree(number of nodes the node points to), degree(sum of in-degree and out-degree) and other numerical attributes of the nodes contained in the csv file.   
+        </p>
+        <p class="list-group-item-text">
+          <b>minSize:</b> The minimum size of all nodes. 
+        </p>
+        <p class="list-group-item-text">
+          <b>maxSize:</b> The maximum size of all nodes. 
+        </p>
+      </div>      
+    </div>
+</div>
+<div class="list-group">
+    <div class="list-group-item active">
+        <h4 class="list-group-item-heading">
+            NodeColor
+        </h4>
+    </div>
+    <div class="list-group-item">
+        <h4 class="list-group-item-heading">
+        <label style="margin-right: 0.5cm">Uniform</label><button type="button" class="btn btn-primary" name="ncu" onclick="showParameter(this)">parameters</button>
+        </h4>
+        <p class="list-group-item-text">
+            All of the nodes are of the same color. 
+        </p>
+    </div>
+    <div id="ncu" class="list-group hide">
+      <div class="list-group-item">
+        <p class="list-group-item-text">
+          <b>colorValue:</b> The color value of all nodes. 
+        </p>
+      </div>      
+    </div>
+    <div class="list-group-item">
+        <h4 class="list-group-item-heading">
+        <label style="margin-right: 0.5cm">Partition</label><button type="button" class="btn btn-primary" name="ncp" onclick="showParameter(this)">parameters</button></h4>
+        <p class="list-group-item-text">
+            Nodes are partitioned into different groups
+according to their attributes and nodes within a group are of the same color.
+        </p>
+    </div>
+    <div id="ncp" class="list-group hide">
+      <div class="list-group-item">
+        <p class="list-group-item-text">
+          <b>Method:</b> Nodes are partitioned into different groups
+according to the attribute and nodes within a group are of the same color. 
+        </p>
+      </div>      
+    </div>
+    <div class="list-group-item">
+        <h4 class="list-group-item-heading">
+        <label style="margin-right: 0.5cm">Ranking</label><button type="button" class="btn btn-primary" name="ncr" onclick="showParameter(this)">parameters</button></h4>
+        <p class="list-group-item-text">
+            Colors are ranked by certain attribute of nodes.
+        </p>
+    </div>
+    <div id="ncr" class="list-group hide">
+      <div class="list-group-item">
+        <p class="list-group-item-text">
+          <b>Method:</b> The attribute which the nodes' colors depend on. The supporting attributes include the in-degree(number of nodes point to the node), out-degree(number of nodes the node points to), degree(sum of in-degree and out-degree) and other numerical attributes of the nodes contained in the csv file.   
+        </p>
+        <p class="list-group-item-text">
+          <b>minColor:</b> The minimum value of color of all nodes. 
+        </p>
+        <p class="list-group-item-text">
+          <b>maxColor:</b> The maximum value of color of all nodes. 
+        </p>
+      </div>      
+    </div>
+</div>
+<div class="list-group">
+    <div class="list-group-item active">
+        <h4 class="list-group-item-heading">
+            EdgeColor
+        </h4>
+    </div>
+    <div class="list-group-item">
+        <h4 class="list-group-item-heading">
+            <label style="margin-right: 0.5cm">Uniform</label><button type="button" class="btn btn-primary" name="ecu" onclick="showParameter(this)">parameters</button>
+        </h4>
+        <p class="list-group-item-text">
+            All of the edges are of the same color. 
+        </p>
+    </div>
+    <div id="ecu" class="list-group hide">
+      <div class="list-group-item">
+        <p class="list-group-item-text">
+          <b>colorValue:</b> The color value of all edges. 
+        </p>
+      </div>      
+    </div>
+    <div class="list-group-item">
+        <h4 class="list-group-item-heading">
+        <label style="margin-right: 0.5cm">Ranking</label><button type="button" class="btn btn-primary" name="ecr" onclick="showParameter(this)">parameters</button></h4>
+        <p class="list-group-item-text">
+            Colors are ranked by certain attribute of edges.
+        </p>
+    </div>
+    <div id="ecr" class="list-group hide">
+      <div class="list-group-item">
+        <p class="list-group-item-text">
+          <b>Method:</b>  The colors of edges are ranked by the weights.
+        </p>
+        <p class="list-group-item-text">
+          <b>minColor:</b> The minimum value of color of all edges. 
+        </p>
+        <p class="list-group-item-text">
+          <b>maxColor:</b> The maximum value of color of all edges. 
+        </p>
+      </div>      
+    </div>
+</div>
+<div class="list-group">
+    <div class="list-group-item active">
+        <h4 class="list-group-item-heading">
+            Layout
+        </h4>
+    </div>
+    <div class="list-group-item">
+        <h4 class="list-group-item-heading">
+            <label style="margin-right: 0.5cm">ForceAtlas2</label><button type="button" class="btn btn-primary" name="fa2" onclick="showParameter(this)">parameters</button>
+        </h4>
+        <p class="list-group-item-text">
+            Quality layout: A linear-attraction linear-repulsion model with few approximations. Speed automatically calculated.
+        </p>
+    </div>
+    <div id="fa2" class="list-group hide">
+      <div class="list-group-item">
+        <p class="list-group-item-text">
+          <b>gravity:</b> Attract the nodes to the center. Prevents islands from  drifting away. 
+        </p>
+        <p class="list-group-item-text">
+          <b>strongGravityMode:</b> A stronger gravity law.
+        </p>
+        <p class="list-group-item-text">
+          <b>barnesHutTheta:</b>Theta of the Barnes Hut optimization.
+        </p>
+        <p class="list-group-item-text">
+          <b>edgeWeightInfluence:</b>How much influence you give to the edges weight.
+        </p>
+        <p class="list-group-item-text">
+          <b>scalingRatio:</b>How much repulsion you want. More makes a more sparse graph.
+        </p>
+        <p class="list-group-item-text">
+          <b>barnesHutOptimize:</b>Barnes Hut optimization.
+        </p>
+        <p class="list-group-item-text">
+          <b>adjustSizes:</b>Use only when spatialized.
+        </p>
+      </div>      
+    </div>
+    <div class="list-group-item">
+        <h4 class="list-group-item-heading">
+        <label style="margin-right: 0.5cm">YifanHuLayout</label><button type="button" class="btn btn-primary" name="yfh" onclick="showParameter(this)">parameters</button></h4>
+        <p class="list-group-item-text">
+            Original Yifan Hu's attraction-repulsion model. Reduce the computational cost by 
+restricting force calculation to the neighborhood. The algorithm stops itself, as it has an alternative cooling sheme.
+        </p>
+    </div>
+    <div id="yfh" class="list-group hide">
+      <div class="list-group-item">
+        <p class="list-group-item-text">
+          <b>barnesHutTheta:</b>  The theta parameter for Barnes-Hut opening criteria. Smaller values mean more accuracy.
+        </p>
+        <p class="list-group-item-text">
+          <b>quadTreeMaxLevel:</b>  The maximum value to be used in the quadtree representation. Greater values mean more accuarcy.
+        </p>
+        <p class="list-group-item-text">
+          <b>initialStep:</b>  The initial step size used in the integration phase. Set this value to a meaningful size compared to the optimal distance.
+        </p>
+        <p class="list-group-item-text">
+          <b>convergenceThreshold:</b> Relative energy convergence threshold. Smaller values mean more accuracy.
+        </p>
+        <p class="list-group-item-text">
+          <b>optimalDistance:</b> The natural length of the springs. Bigger value mean nodes will be farther apart. 
+        </p>
+        <p class="list-group-item-text">
+          <b>relativeStrength:</b> The relative strength between electrical force(repulsion) and spring force(attraction). 
+        </p>
+        <p class="list-group-item-text">
+          <b>adaptiveCooling:</b> Controls the use of adaptive cooling. It is used to help the layout algorithm to avoid energy local minimal.
+        </p>
+        <p class="list-group-item-text">
+          <b>stepRatio:</b> The ratio used to update the step size across iterations.
+        </p>
+      </div>      
+    </div>
+    <div class="list-group-item">
+        <h4 class="list-group-item-heading">
+        <label style="margin-right: 0.5cm">ForceAtlas</label><button type="button" class="btn btn-primary" name="fa" onclick="showParameter(this)">parameters</button></h4>
+        <p class="list-group-item-text">
+            ForceAtlas makes graph more compact, readable, and can show authorities more central than hubs. Auto-stabilization improve convergence at the end of the layout.
+        </p>
+    </div>
+    <div id="fa" class="list-group hide">
+      <div class="list-group-item">
+        <p class="list-group-item-text">
+          <b>inertia:</b>  Conservation of node speed at each new pass.
+        </p>
+        <p class="list-group-item-text">
+          <b>repulsionStrength:</b>  How strong does each node rejects others.
+        </p>
+        <p class="list-group-item-text">
+          <b>maxDisplacement:</b>  This is limiting each node's displacement.
+        </p>
+        <p class="list-group-item-text">
+          <b>speed:</b> Permits to increase convergence speed at the price of a precision loss.
+        </p>
+        <p class="list-group-item-text">
+          <b>freezeStrength:</b> Power of the auto stabilize function.
+        </p>
+        <p class="list-group-item-text">
+          <b>f1gravity:</b> This force attracts all the nodes to the center to avoid dispersion of disconnected components. 
+        </p>
+        <p class="list-group-item-text">
+          <b>freezeInertia:</b> This parameter represents the auto-adaptiveness of the anti-flickering function.x
+        </p>
+        <p class="list-group-item-text">
+          <b>freezeBalance:</b> Activates the freezing of unstable nodes. Despite some loss of efficiency, this prevents most of nodes flickering.
+        </p>
+      </div>      
+    </div>
+    <div class="list-group-item">
+        <h4 class="list-group-item-heading">
+        <label style="margin-right: 0.5cm">FruchtermanReingold</label><button type="button" class="btn btn-primary" name="fro" onclick="showParameter(this)">parameters</button></h4>
+        <p class="list-group-item-text">
+            Fruchterman Reingold is a classical layout function, since 1984.
+        </p>
+    </div>
+    <div id="fro" class="list-group hide">
+      <div class="list-group-item">
+        <p class="list-group-item-text">
+          <b>gravity:</b>  This force attracts all nodes to the center to avoid dispersion of disconnected components.
+        </p>
+        <p class="list-group-item-text">
+          <b>speed:</b>  Increase convergence speed at the price of a precision lose.
+        </p>
+        <p class="list-group-item-text">
+          <b>area:</b>  The graph size area.
+        </p>
+      </div>      
+    </div>
+    <div class="list-group-item">
+        <h4 class="list-group-item-heading">
+        <label style="margin-right: 0.5cm">Label Adjust</label><button type="button" class="btn btn-primary" name="la" onclick="showParameter(this)">parameters</button></h4>
+        <p class="list-group-item-text">
+            Label Adjust works on text size to repulse nodes and therefore makes every label readable.
+        </p>
+    </div>
+    <div id="la" class="list-group hide">
+      <div class="list-group-item">
+        <p class="list-group-item-text">
+          <b>speed:</b>  Speed factor.
+        </p>
+        <p class="list-group-item-text">
+          <b>adjustBySize:</b>  Include node size in repulsion.
+        </p>
+      </div>      
+    </div>
+    <div class="list-group-item">
+        <h4 class="list-group-item-heading">
+        <label style="margin-right: 0.5cm">NoverLapLayout</label><button type="button" class="btn btn-primary" name="nl" onclick="showParameter(this)">parameters</button></h4>
+        <p class="list-group-item-text">
+            Label Adjust works on text size to repulse nodes and therefore makes every label readable.
+        </p>
+    </div>
+    <div id="nl" class="list-group hide">
+      <div class="list-group-item">
+        <p class="list-group-item-text">
+          <b>speed:</b>  Speed.
+        </p>
+        <p class="list-group-item-text">
+          <b>ratio:</b>  Ratio.
+        </p>
+        <p class="list-group-item-text">
+          <b>margin:</b> Margin.
+        </p>
+      </div>      
+    </div>
+    <div class="list-group-item">
+        <h4 class="list-group-item-heading">
+        <label style="margin-right: 0.5cm">RotateLayout</label><button type="button" class="btn btn-primary" name="rl" onclick="showParameter(this)">parameters</button></h4>
+        <p class="list-group-item-text">
+            Rotate the graph by degrees.
+        </p>
+    </div>
+    <div id="rl" class="list-group hide">
+      <div class="list-group-item">
+        <p class="list-group-item-text">
+          <b>angle:</b>  Clockwise rotation angle in degrees.
+        </p>
+      </div>      
+    </div>
+    <div class="list-group-item">
+        <h4 class="list-group-item-heading">
+        <label style="margin-right: 0.5cm">ContractLayout</label><button type="button" class="btn btn-primary" name="cl" onclick="showParameter(this)">parameters</button></h4>
+        <p class="list-group-item-text">
+            Contract the layout around its center.
+        </p>
+    </div>
+    <div id="cl" class="list-group hide">
+      <div class="list-group-item">
+        <p class="list-group-item-text">
+          <b>scale:</b>  Scale factor.
+        </p>
+      </div>      
+    </div>
+    <div class="list-group-item">
+        <h4 class="list-group-item-heading">
+        <label style="margin-right: 0.5cm">ExpandLayout</label><button type="button" class="btn btn-primary" name="epl" onclick="showParameter(this)">parameters</button></h4>
+        <p class="list-group-item-text">
+            Expand the layout away from its center.
+        </p>
+    </div>
+    <div id="epl" class="list-group hide">
+      <div class="list-group-item">
+        <p class="list-group-item-text">
+          <b>scale:</b>  Scale factor.
+        </p>
+      </div>      
+    </div>
+    <div class="list-group-item">
+        <h4 class="list-group-item-heading">
+        <label style="margin-right: 0.5cm">RandomLayout</label><button type="button" class="btn btn-primary" name="rdl" onclick="showParameter(this)">parameters</button></h4>
+        <p class="list-group-item-text">
+            A random distribution of the nodes.
+        </p>
+    </div>
+    <div id="rdl" class="list-group hide">
+      <div class="list-group-item">
+        <p class="list-group-item-text">
+          <b>size:</b>  The size of the space to randomly distribute the nodes.
+        </p>
+      </div>      
+    </div>
+    <div class="list-group-item">
+        <h4 class="list-group-item-heading">
+        <label style="margin-right: 0.5cm">Customrized</label><button type="button" class="btn btn-primary" name="ctl" onclick="showParameter(this)">parameters</button></h4>
+        <p class="list-group-item-text">
+            The positions of nodes are pre-defined.
+        </p>
+    </div>
+    <div id="ctl" class="list-group hide">
+      <div class="list-group-item">
+        <p class="list-group-item-text">
+          <b>position:</b>  The csv file which contains 'x' and 'y' columns.
+        </p>
+      </div>      
+    </div>
+</div>
+</div>
+</div>
+<div class="container hide" id="example">
+
+  <style>
+    #my-graph-container {
+     
+      top: 350px;
+      bottom: 0px;
+      left: 200px;
+      right: 200px;
+      position: absolute;
+  
+    }
+  </style>
+  <div id="my-graph-container"></div>
+
+</div>
+<div class="container" >
+<div class="well well-lg hide" id="graphs">
+
+<table class="table table-striped">
+  <caption>Public Networks</caption>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Author</th>
+      <th>Link</th>
+    </tr>
+  </thead>
+  <tbody id="table">
+    <tr>
+      <td>Uma</td>
+      <td>Pune</td>
+      <td><a href="/data/1534366512623">View Graph</a></td>
+    </tr>
+  </tbody>
+</table>
+
+</div>
+</div>
+</div>
+</body>
+<script type="text/javascript">
+var s;
+    
+
+// Generate a random graph:
+window.onload=function generate(){
+  var i,N=100,E=100,g = {
+      nodes: [],
+      edges: []
+  };
+  for (i = 0; i < N; i++)
+    g.nodes.push({
+      id: 'n' + i,
+      label: 'Node ' + i,
+      x: Math.random(),
+      y: Math.random(),
+      size: Math.random(),
+      color: '#666'
+    });
+
+  for (i = 0; i < E; i++)
+    g.edges.push({
+      id: 'e' + i,
+      source: 'n' + (Math.random() * N | 0),
+      target: 'n' + (Math.random() * N | 0),
+      size: Math.random(),
+      color: '#ccc'
+    });
+  // sigma.renderers.def = sigma.renderers.canvas
+  // Instantiate sigma:
+  s = new sigma({
+    graph: g,
+    container: 'my-graph-container'
+  });
+  s.refresh();
+  // Initialize the dragNodes plugin:
+  var dragListener = sigma.plugins.dragNodes(s, s.renderers[0]);
+
+  dragListener.bind('startdrag', function(event) {
+    console.log(event);
+  });
+  dragListener.bind('drag', function(event) {
+    console.log(event);
+  });
+  dragListener.bind('drop', function(event) {
+    console.log(event);
+  });
+  dragListener.bind('dragend', function(event) {
+    console.log(event);
+  });
+  //send an Ajax request to get public graphs
+  $.ajax({
+    type: 'POST',
+    url: 'readcsv.php',
+    success: function(data){
+      //alert("success");
+      
+      var json  = eval(data);
+      var myhtml = "";
+      $.each(json, function (index) {                      
+          var name = json[index].graph;  
+          var author = json[index].author;  
+          var path = json[index].path;  
+          myhtml += "<tr><td>" + name + "</td><td>" + author + "</td><td><a href=\'/data/" +
+           path + "\'>View Graph</a></td>";  
+      }); 
+      $("#table").append(myhtml);
+      
+    },
+    dataType: "json"
+  });
+};
+function introduction(e){
+  var name = e.getAttribute("value");
+  var active = e.parentNode;
+  var inactive = document.getElementsByClassName("active")[0];
+  inactive.setAttribute("class","");
+  active.setAttribute("class", "active");
+  var hide = document.getElementsByClassName("show")[0];
+  hide.setAttribute("class", "hide");
+  var show = document.getElementById(name);
+  if(name=="example"){
+
+    show.setAttribute("class", "container show");
+    s.refresh();
+  }
+  else
+  {
+    show.setAttribute("class", "well well-lg show");
+  }
+}
+function showParameter(e){
+  var html = e.innerHTML;
+  var type = e.getAttribute("name");
+  var show = document.getElementById(type);
+  if(html=="parameters")
+  {
+    e.innerHTML = "hide";
+    show.setAttribute("class", "list-group show");
+  }
+  else
+  {
+    e.innerHTML = "parameters";
+    show.setAttribute("class", "list-group hide");
+  }
+  
+  
+}
+</script>
+</html>

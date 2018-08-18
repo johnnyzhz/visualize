@@ -18,7 +18,7 @@ public class main {
         HashMap<String, Object> node = new HashMap();
         HashMap<String, Object> input = new HashMap();
         HashMap<String, Object> edge = new HashMap();
-        layout.put("type", "YifanHuLayout");
+        layout.put("type", "ForceAtlas2");
         layout.put("f2gravity", "2.0");
         layout.put("scalingRatio", "5.0"); 
         layout.put("strongGravityMode","true");     
@@ -63,12 +63,13 @@ public class main {
         node.put("sizeValue", "8.0");    
         node.put("minSize", "1.0");
         node.put("maxSize", "8.0");
-        node.put("color", "ranking");
-        node.put("colorRankingMethod", "inDegree");
+        node.put("color", "partition");
+        node.put("colorPartitionMethod", "group");
         node.put("minColor","#0dde63");
         node.put("maxColor","#223344");
-        input.put("nodesFile", "C:\\Users\\HP\\Documents\\nodes.csv");
-        input.put("edgesFile", "C:\\Users\\HP\\Documents\\edges6.csv");
+        input.put("nodesFile", "G:\\HP\\Documents\\nodes.csv");
+        input.put("edgesFile", "G:\\HP\\Documents\\edges7.csv");
+        input.put("posFile", "G:\\HP\\Documents\\data.csv");
         edge.put("color", "ranking");
         edge.put("colorRankingMethod", "weight");
         edge.put("minColor","#000663");

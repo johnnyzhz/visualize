@@ -7,9 +7,12 @@ package test_sigma;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.util.concurrent.TimeUnit;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.nio.charset.Charset;
 import org.gephi.layout.spi.LayoutProperty;
 import org.gephi.io.processor.plugin.AppendProcessor;
 import org.gephi.appearance.api.AppearanceController;
@@ -59,7 +62,9 @@ import org.gephi.layout.plugin.forceAtlas2.ForceAtlas2;
 import org.gephi.layout.plugin.labelAdjust.LabelAdjust;
 import uk.ac.ox.oii.sigmaexporter.SigmaExporter;
 import uk.ac.ox.oii.sigmaexporter.model.ConfigFile;
+import uk.ac.ox.oii.jsonexporter.JSONExporter;
 import java.io.BufferedReader;
+
 import java.io.InputStreamReader;
 /**
  *
@@ -91,7 +96,8 @@ public class RankingGraph {
         try {
             String nodesFile = (String)cfg.input.get("nodesFile");
             String edgesFile = (String)cfg.input.get("edgesFile");
-            System.out.println(nodesFile);
+            
+            //System.out.println(posFile);
             File file_node = new File(nodesFile);
             container = importController.importFile(file_node);
             container.getLoader().setEdgeDefault(EdgeDirectionDefault.DIRECTED);   //Force DIRECTED
@@ -105,6 +111,10 @@ public class RankingGraph {
             container2.getLoader().setAllowAutoNode(true);  //create missing nodes
             container2.getLoader().setEdgesMergeStrategy(EdgeMergeStrategy.SUM);
             container2.getLoader().setAutoScale(true);
+            
+            
+//            container3.getLoader().setEdgesMergeStrategy(EdgeMergeStrategy.SUM);
+//            container3.getLoader().setAutoScale(true);
 
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -112,6 +122,7 @@ public class RankingGraph {
         }
         importController.process(container, new DefaultProcessor(), workspace);
         importController.process(container2, new AppendProcessor(), workspace); 
+        
 
         //Append imported data to GraphAPI
         //importController.process(container, new DefaultProcessor(), workspace);
@@ -221,6 +232,7 @@ public class RankingGraph {
                 try{
                     String colorPartitionMethod = (String)cfg.node.get("colorPartitionMethod");
                     Column column = graphModel.getNodeTable().getColumn(colorPartitionMethod);
+                    
                     Function func = appearanceModel.getNodeFunction(graph, column, PartitionElementColorTransformer.class);
                     Partition partition = ((PartitionFunction) func).getPartition();
                     Palette palette = PaletteManager.getInstance().generatePalette(partition.size());
@@ -247,6 +259,7 @@ public class RankingGraph {
                 }
                 else{
                     try{
+      
                         Column edgeAttributeColumn = graphModel.getEdgeTable().getColumn(edgeColorRankingMethod);
                         edgeColorRanking = appearanceModel.getEdgeFunction(graph, edgeAttributeColumn, RankingElementColorTransformer.class);
                     }
@@ -273,21 +286,7 @@ public class RankingGraph {
             
                 appearanceController.transform(edgeColorRanking);
                 break;
-            case "partiton":
-                try{
-                    String edgeColorPartitionMethod = (String)cfg.edge.get("edgeColorPartitionMethod");
-                    Column edgeAttributeColumn = graphModel.getEdgeTable().getColumn(edgeColorPartitionMethod);
-                    Function func = appearanceModel.getNodeFunction(graph, edgeAttributeColumn, PartitionElementColorTransformer.class);
-                    Partition partition = ((PartitionFunction) func).getPartition();
-                    Palette palette = PaletteManager.getInstance().generatePalette(partition.size());
-                    partition.setColors(palette.getColors());
-                    appearanceController.transform(func);
-                }
-                catch(Exception e)
-                {
-                    e.printStackTrace();
-                    return null;
-                }
+            
                 
                 
                 
@@ -296,13 +295,14 @@ public class RankingGraph {
         //Set the layout
         
         String layoutType = (String) cfg.layout.get("type");
+        System.out.println(layoutType);
         //return layoutType;
         switch(layoutType)
         {
             case "ForceAtlas":
                 ForceAtlasLayout f1layout = new ForceAtlasLayout(null);
                 f1layout.setGraphModel(graphModel);
-                f1layout.setCooling(Double.parseDouble((String)cfg.layout.get("cooling")));
+                //f1layout.setCooling(Double.parseDouble((String)cfg.layout.get("cooling")));
                 f1layout.setFreezeBalance(Boolean.parseBoolean((String)cfg.layout.get("freezeBalance")));
                 f1layout.setFreezeInertia(Double.parseDouble((String)cfg.layout.get("freezeInertia")));
                 f1layout.setFreezeStrength(Double.parseDouble((String)cfg.layout.get("freezeStrength")));
@@ -385,6 +385,7 @@ public class RankingGraph {
                     explayout.goAlgo();
                 }
                 explayout.endAlgo();
+                
                 break;
             case "LabelAdjust":
                 LabelAdjust labellayout = new LabelAdjust(null);
@@ -408,7 +409,7 @@ public class RankingGraph {
                 }
                 ftrlayout.endAlgo();
                 break;
-            case "YifanHu":
+            case "YifanHuLayout":
                 YifanHuLayout yfhlayout = new YifanHuLayout(null, new StepDisplacement(1f));
                 yfhlayout.setGraphModel(graphModel);
                 yfhlayout.setAdaptiveCooling(Boolean.parseBoolean((String)cfg.layout.get("adaptiveCooling")));
@@ -418,7 +419,30 @@ public class RankingGraph {
                 yfhlayout.setInitialStep(Float.parseFloat((String)cfg.layout.get("initialStep")));
                 yfhlayout.setQuadTreeMaxLevel(Integer.parseInt((String)cfg.layout.get("quadTreeMaxLevel")));
                 yfhlayout.setConvergenceThreshold(Float.parseFloat((String)cfg.layout.get("convergenceThreshold")));
-                yfhlayout.setStep(Float.parseFloat((String)cfg.layout.get("step")));
+                //yfhlayout.setStep(Float.parseFloat((String)cfg.layout.get("step")));
+                for (Column col : graphModel.getNodeTable()) {
+                    System.out.println(col);
+                }
+                break;
+            case "Customized":
+                try{
+                    String posFile = (String)cfg.input.get("posFile");
+                    File file_pos = new File(posFile);
+                    Container container3;
+                    container3 = importController.importFile(file_pos);
+                    container3.getLoader().getNodeColumn("x");  //create missing nodes 
+                    importController.process(container3, new AppendProcessor(), workspace); 
+//                    for (Column col : graphModel.getNodeTable()) {
+//                        System.out.println(col);
+//                    }
+                }catch(Exception e)
+                {
+                    e.printStackTrace();
+                    return null;
+                }
+//                for (Column col : graphModel.getNodeTable()) {
+//                    System.out.println(col);
+//                }
                 break;
     
         }
@@ -426,32 +450,39 @@ public class RankingGraph {
         //Write to Sigma.js file
         Degree degree = new Degree();
         degree.execute(graphModel);
-        myExporter sigmaExporter = new myExporter();
+        myExporter sigmaExporter = new myExporter(this.cfg);
         ConfigFile cfg = new ConfigFile();
         HashMap infoPanel = cfg.getInformationPanel();
+        
         infoPanel.put("groupByEdgeDirection", true);
         cfg.setInformationPanel(infoPanel);
+//        HashMap sigma = cfg.getSigma();
+//        HashMap drawProp = (HashMap)sigma.get("drawingProperties");
+//        drawProp.put("defaultLabelSize", 50);
+        HashMap features = cfg.getFeatures();
+        features.put("hoverBehavior", "dim");
         String dest = String.valueOf(System.currentTimeMillis());
         String destfile = "/var/www/webnetvis/data/" + dest;
         File file = new File(destfile);
         if(!file.exists()){
             file.mkdir();
         }
-        sigmaExporter.setConfigFile(cfg, destfile , true);
+        sigmaExporter.setConfigFile(cfg, destfile , false);
+        //sigmaExporter.setConfigFile(cfg, "E:\\sigma.js" , false);
         sigmaExporter.setWorkspace(workspace);
         sigmaExporter.execute();
-        //convert json file to csv file
+//        
         try {
-            String[] args = new String[] {"python3", "/var/www/webnetvis/json_csv.py", destfile+"/network/data.json", destfile+"/network/data.csv"};
+            String[] args = new String[] {"python3", "/var/www/webnetvis/json_csv.py", destfile+"/data.json", destfile+"/data.csv"};
             
-            //String[] args = new String[] {"python", "E:\\visualize\\test_sigma\\json_csv.py", "E:\\network\\network\\data.json", "E:\\network\\network\\data.csv"};
+            //String[] args = new String[] {"python", "E:\\visualize\\test_sigma\\json_csv.py", "E:\\sigma.js\\data.json", "E:\\sigma.js\\data.csv"};
             Process pr = Runtime.getRuntime().exec(args);
             Runtime.getRuntime().exec("chmod 777 -R " + destfile);
             BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream()));
             String line;
-            while ((line = in.readLine()) != null) {
-                System.out.println(line);
-            }
+//            while ((line = in.readLine()) != null) {
+//                System.out.println(line);
+//            }
             in.close();
             pr.waitFor();
             System.out.println("end");
@@ -460,22 +491,40 @@ public class RankingGraph {
         }
         //convert csv file to html file
         try {            
-            String[] args = new String[] {"csvtotable", destfile+"/network/data.csv", destfile+"/network/data.html"};
-            //String[] args = new String[]{"csvtotable", "E:\\network\\network\\data.csv", "E:\\network\\network\\data.html"};
+            String[] args = new String[] {"csvtotable", destfile+"/data.csv", destfile+"/data.html"};
+            //String[] args = new String[]{"csvtotable", "E:\\sigma.js\\data.csv", "E:\\sigma.js\\data.html"};
             Process pr = Runtime.getRuntime().exec(args);
             BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream()));
             String line;
-            while ((line = in.readLine()) != null) {
-                System.out.println(line);
-            }
+//            while ((line = in.readLine()) != null) {
+//                System.out.println(line);
+//            }
             in.close();
             pr.waitFor();
             System.out.println("end");
         }catch(Exception e){
             e.printStackTrace();
         }
-        return "data/"+dest+"/network";
-//        //Export
+        try{
+            String[] args= new String[] {"cp", "/var/www/webnetvis/test_json.html", destfile+"/index.html"};
+            Process pr = Runtime.getRuntime().exec(args);
+            pr.waitFor();
+            System.out.println("end");
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        System.out.println("finish");
+        //export the pdf file
+        ExportController ec = Lookup.getDefault().lookup(ExportController.class);
+        try {
+            //ec.exportFile(new File("E:\\sigma.js\\graph.pdf"));
+            ec.exportFile(new File(destfile+"/graph.pdf"));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return "data/" + dest;
+
         
     }
 }

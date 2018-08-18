@@ -1,5 +1,7 @@
 <?php
-
+	//info
+	$public = $_POST['public'];
+	
 	$nodeFile = $_POST['nodeFile'];
 	$edgeFile = $_POST['edgeFile'];
 	$nodeSize = $_POST['ns'];
@@ -18,7 +20,6 @@
 	$edgeColorRankingMethod = $_POST['edgeColorRankingMethod'];
 	$edgeMinColor = $_POST['edgeMinColor'];
 	$edgeMaxColor = $_POST['edgeMaxColor'];
-	$edgeColorPartitionMethod = $_POST['edgeColorPartitionMethod'];
 	$layoutType = $_POST['lo'];
 	//ForceAtlas2
 	$f2gravity = $_POST['f2gravity'];
@@ -29,7 +30,7 @@
 	$barnesHutOptimize = $_POST['barnesHutOptimize'];
 	$adjustSizes = $_POST['adjustSizes'];
 	//ForceAtlas
-	$cooling = $_POST['cooling'];
+	
 	
 	$freezeBalance = $_POST['freezeBalance'];
 	$freezeInertia = $_POST['freezeInertia'];
@@ -61,13 +62,16 @@
 	//YifanHu
 	$stepRatio = $_POST['stepRatio'];
 	$adaptiveCooling = $_POST['adaptiveCooling'];
-	$step = $_POST['step'];
+	
 	$relativeStrength = $_POST['relativeStrength'];
 	$optimalDistance = $_POST['optimalDistance'];
 	$convergenceThreshold = $_POST['convergenceThreshold'];
 	$initialStep = $_POST['initialStep'];
 	$yfhbarnesHutTheta = $_POST['yfhbarnesHutTheta'];
 	$quadTreeMaxLevel = $_POST['quadTreeMaxLevel'];
+	//Customized
+	$posFile = $_POST['posFile'];
+
 
 
 	
@@ -101,7 +105,6 @@
 
 	$edge->put("color", $edgeColor);
 	$edge->put("colorValue", $edgeColorValue);
-	$edge->put("colorPartitionMethod", $edgeColorPartitionMethod);
 	$edge->put("minColor", $edgeMinColor);
 	$edge->put("maxColor", $edgeMaxColor);
 	$edge->put("colorRankingMethod", $edgeColorRankingMethod);
@@ -118,7 +121,7 @@
 	$layout->put("adjustSizes", $adjustSizes);
 
 	// //ForceAtlas
-	$layout->put("cooling", $cooling);
+	
 	$layout->put("freezeBalance", $freezeBalance);
 	$layout->put("freezeInertia", $freezeInertia);
 	$layout->put("freezeStrength", $freezeStrength);
@@ -149,7 +152,7 @@
 	//YifanHu
 	$layout->put("stepRatio", $stepRatio);
 	$layout->put("adaptiveCooling", $adaptiveCooling);
-	$layout->put("step", $step);
+	
 	$layout->put("relativeStrength", $relativeStrength);
 	$layout->put("optimalDistance", $optimalDistance);
 	$layout->put("convergenceThreshold", $convergenceThreshold);
@@ -160,6 +163,7 @@
 
 	$input->put("nodesFile", $nodeFile);
 	$input->put("edgesFile", $edgeFile);
+	$input->put("posFile", $posFile);
 	
 	$cfg = new Java("test_sigma.Config", $layout, $node, $input, $edge);              
 	$rankingGraph = new Java("test_sigma.RankingGraph", $cfg);
@@ -168,17 +172,33 @@
 	$result = $rankingGraph->script();
 	$info = (string)$result;
 	
-	if ($info!= null)
+	if (strpos($info, "data/") == 0)
 	{
+		if($public=="true")
+		{
+			$num = substr($info, 5);
+			//echo $num;
+			$graph = $_POST['graph'];
+			$author = $_POST['author'];
+			$line = $graph."\t".$author."\t".$num;
+			$file = fopen("public.txt", "a");
+			fwrite($file, $line);
+			fclose($file);
+
+		}
 		
 		header("Location:".$info); 
 		
 	}
 	else
-	{
-		echo "An error occurs when building the directory, please try again!";
+	{	if($info == null){
+			echo "An error occurs when building the directory, please try again!";
+		}
+		else{
+			echo $info;
+		}
 	}
-
+	
 
 
 

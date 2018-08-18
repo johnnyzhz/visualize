@@ -51,6 +51,11 @@ public class myExporter extends SigmaExporter{
     private Workspace workspace;
     private ProgressTicket progress;
     private boolean cancel = false;
+    public Config graphCfg;
+    public myExporter(Config cfg)
+    {
+        this.graphCfg = cfg;
+    }
     public boolean execute() {
         try {
             final File pathFile = new File(path);
@@ -61,52 +66,12 @@ public class myExporter extends SigmaExporter{
                 FileOutputStream outStream = null;
                 final Charset utf8 = Charset.forName("UTF-8");
 
-                //Copy resource template
-                try {
-                    InputStream zipStream = myExporter.class.getResourceAsStream("/resource/network_test.zip"); //uk/ac/ox/oii/sigmaexporter/resources/network/index.html
-
-                    //Path zipPath = Paths.get(path.getAbsolutePath()+"/network.zip");
-                    //Files.copy(zipStream,zipPath);//NIO / JDK 7 Only
-
-                    ZipHandler.extractZip(zipStream, pathFile.getAbsolutePath());
-                } catch (Exception e) {
-                    Logger.getLogger(SigmaExporter.class.getName()).log(Level.SEVERE, null, e);
-                }
-
+                
 
                 //Gson to handle JSON writing and escape
                 Gson gson = new Gson();
                 Gson gsonPretty = new GsonBuilder().setPrettyPrinting().create();
                     
-                //Write config.json
-                try {
-                    //FileWriter(Path...) constructor uses 'default encoding' on Mac this produces error
-                    
-                    //Really want to use jdk7 nio methods to force UTF-8
-                    //try (BufferedWriter writer = Files.newBufferedWriter(pathFile.getAbsolutePath() + "/network/config.json", charset)) {
-                    
-                    //Alternative for now with jdk6 is FileOutputStream wrapped in OutputStreamWriter)
-                    
-                    outStream = new FileOutputStream(pathFile.getAbsolutePath() + "/network/config.json");
-                    writer = new OutputStreamWriter(outStream,utf8);
-                    
-                    
-                    
-                    gsonPretty.toJson(config, writer);
-                } catch (Exception e) {
-                    Logger.getLogger(SigmaExporter.class.getName()).log(Level.SEVERE, null, e);
-                } finally {
-                    if (writer != null) {
-                        writer.close();
-                        writer = null;
-                    }
-                    if (outStream != null) {
-                        outStream.close();
-                        outStream = null;
-                    }
-                }
-
-
                 HashMap<String,String> nodeIdMap = new HashMap<String,String>();
                 int nodeId=0;
                 EdgeColor colorMixer = new EdgeColor(EdgeColor.Mode.MIXED);
@@ -130,8 +95,41 @@ public class myExporter extends SigmaExporter{
                     for (Node n : nodeArray) {
                         String id = n.getId().toString();
                         String label = n.getLabel();
-                        float x = n.x();
-                        float y = n.y();
+                       
+                        float x = 0f;
+                        float y = 0f;
+                        System.out.println(graphCfg.layout.get("type"));
+                        if(graphCfg.layout.get("type").equals("Customized")){
+                            System.out.println("position in file!");
+                            //x = (float)n.getAttribute("x");
+                            String typeX = n.getAttribute("x").getClass().getName();
+                            String typeY = n.getAttribute("y").getClass().getName();
+                            if(typeX.equals("java.lang.Double")){
+                                double xd = (double)n.getAttribute("x"); 
+                                x = (float)xd;
+                            }
+                            else
+                            {
+                                int xd = (int)n.getAttribute("x"); 
+                                x = (float)xd;
+                            }
+                            if(typeY.equals("java.lang.Double")){
+                                double yd = (double)n.getAttribute("y"); 
+                                y = (float)yd;
+                            }
+                            else
+                            {
+                                int yd = (int)n.getAttribute("y"); 
+                                y = (float)yd;
+                            }
+                            
+                        }
+                        else{
+                            System.out.println("position calculated!");
+                            x = n.x();
+                            y = n.y();
+                        }
+                        System.out.println(label +"   "+ String.valueOf(x) + "   " + String.valueOf(y));
                         float size = n.size();
                         String color = "rgb(" + (int) (n.r() * 255) + "," + (int) (n.g() * 255) + "," + (int) (n.b() * 255) + ")";
 
@@ -202,10 +200,10 @@ public class myExporter extends SigmaExporter{
                         Iterator<Column> eAttr = e.getAttributeColumns().iterator();
                         while (eAttr.hasNext()) {
                             Column col = eAttr.next();
-                            if (col.isProperty() || "weight".equalsIgnoreCase(col.getId())) {
-                                //isProperty() excludes id, label, but not weight
-                                continue;
-                            }
+//                            if (col.isProperty() || "weight".equalsIgnoreCase(col.getId())) {
+//                                //isProperty() excludes id, label, but not weight
+//                                continue;
+//                            }
                             String name = col.getTitle();
                             Object valObj = e.getAttribute(col);
                             if (valObj == null) {
@@ -238,7 +236,7 @@ public class myExporter extends SigmaExporter{
                     }
 
 
-                    outStream = new FileOutputStream(pathFile.getAbsolutePath() + "/network/data.json");
+                    outStream = new FileOutputStream(pathFile.getAbsolutePath() + "/data.json");
                     writer = new OutputStreamWriter(outStream,utf8);
                     
                     HashMap<String, HashSet<GraphElement>> json = new HashMap<String, HashSet<GraphElement>>();
