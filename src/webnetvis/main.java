@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package test_sigma;
+package webnetvis;
 
 import java.util.HashMap;
 
@@ -67,9 +67,9 @@ public class main {
         node.put("colorPartitionMethod", "group");
         node.put("minColor","#0dde63");
         node.put("maxColor","#223344");
-        input.put("nodesFile", "G:\\HP\\Documents\\nodes.csv");
-        input.put("edgesFile", "G:\\HP\\Documents\\edges7.csv");
-        input.put("posFile", "G:\\HP\\Documents\\data.csv");
+        input.put("nodesFile", "/tmp/nodes.csv");
+        input.put("edgesFile", "/tmp/edges7.csv");
+        input.put("posFile", "/tmp/data.csv");
         edge.put("color", "ranking");
         edge.put("colorRankingMethod", "weight");
         edge.put("minColor","#000663");

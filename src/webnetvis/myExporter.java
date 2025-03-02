@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package test_sigma;
+package webnetvis;
 import uk.ac.ox.oii.sigmaexporter.SigmaExporter;
 import uk.ac.ox.oii.sigmaexporter.model.ConfigFile;
 /**

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package test_sigma;
+package webnetvis;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
@@ -62,7 +62,6 @@ import org.gephi.layout.plugin.forceAtlas2.ForceAtlas2;
 import org.gephi.layout.plugin.labelAdjust.LabelAdjust;
 import uk.ac.ox.oii.sigmaexporter.SigmaExporter;
 import uk.ac.ox.oii.sigmaexporter.model.ConfigFile;
-import uk.ac.ox.oii.jsonexporter.JSONExporter;
 import java.io.BufferedReader;
 
 import java.io.InputStreamReader;

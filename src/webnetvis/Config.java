@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package test_sigma;
+package webnetvis;
 import java.util.HashMap;
 import org.gephi.layout.spi.Layout;
 import org.gephi.layout.plugin.forceAtlas2.ForceAtlas2;
